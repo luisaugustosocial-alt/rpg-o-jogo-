@@ -7,6 +7,8 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -19,6 +21,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class HogwartsRPGGame extends ApplicationAdapter {
     private PerspectiveCamera camera;
     private ModelBatch batch;
+    private SpriteBatch hudBatch;
+    private BitmapFont hudFont;
     private Environment environment;
     private ModelBuilder builder;
     private final Array<Model> ownedModels = new Array<>();
@@ -47,6 +51,9 @@ public class HogwartsRPGGame extends ApplicationAdapter {
 
     @Override public void create() {
         batch = new ModelBatch();
+        hudBatch = new SpriteBatch();
+        hudFont = new BitmapFont();
+        hudFont.setColor(Color.WHITE);
         builder = new ModelBuilder();
         environment = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.65f, 0.65f, 0.72f, 1f));
@@ -229,6 +236,18 @@ public class HogwartsRPGGame extends ApplicationAdapter {
         if (spellActive && spell != null) batch.render(spell, environment);
         batch.end();
 
+        hudBatch.begin();
+        hudFont.draw(hudBatch, "HOGWARTS RPG", 22, Gdx.graphics.getHeight() - 24);
+        hudFont.draw(hudBatch, MISSIONS[Math.min(mission, 4)], 22, Gdx.graphics.getHeight() - 52);
+        hudFont.draw(hudBatch, "Inimigos: " + enemies.size + "   Derrotados: " + defeated + "   MAGIA ILIMITADA", 22, Gdx.graphics.getHeight() - 78);
+        hudFont.draw(hudBatch, "WASD mover | Mouse olhar | E/clique: feitico | F: proxima missao | ESC: soltar mouse", 22, 28);
+        if (messageTimer > 0) {
+            hudFont.setColor(Color.GOLD);
+            hudFont.draw(hudBatch, message, 22, Gdx.graphics.getHeight() - 108);
+            hudFont.setColor(Color.WHITE);
+        }
+        hudBatch.end();
+
         Gdx.graphics.setTitle("Hogwarts RPG | WASD mover | mouse olhar | E/clique esquerdo: feitico | F: proxima missao | " +
             MISSIONS[Math.min(mission, 4)] + " | Inimigos: " + enemies.size + " | Derrotados: " + defeated +
             (messageTimer > 0 ? " | " + message : ""));
@@ -236,6 +255,8 @@ public class HogwartsRPGGame extends ApplicationAdapter {
 
     @Override public void dispose() {
         batch.dispose();
+        hudBatch.dispose();
+        hudFont.dispose();
         for (Model model : ownedModels) model.dispose();
     }
 
