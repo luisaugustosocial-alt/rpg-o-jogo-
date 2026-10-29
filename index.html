@@ -34,14 +34,37 @@ const mat=(c,r=.8,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,meta
 const mats={grass:mat('#243c31'),stone:mat('#514b58'),dark:mat('#171521'),gold:mat('#c9a55b',.35,.5),wood:mat('#4b3026'),skin:mat('#d5a27f'),robe:mat('#29354c'),leaf:mat('#314d39'),white:mat('#ddd5c1'),red:mat('#873c47'),blue:mat('#3e5688'),purple:mat('#55406f')};
 const box=(w,h,d,m,x,y,z,group=scene)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;group.add(o);return o};
 function makeCharacter(name,color,enemy=false){
- const g=new THREE.Group(),skin=mat(enemy?'#9b9b9c': '#d5a17f'),robe=mat(color),hair=mat(enemy?'#15151c':'#34251e'),boot=mat('#191722');
- const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.34,.7,4,8),robe);torso.position.y=1.2;torso.castShadow=true;g.add(torso);
- const head=new THREE.Mesh(new THREE.SphereGeometry(.25,16,12),skin);head.position.y=1.93;head.castShadow=true;g.add(head);
- const hairmesh=new THREE.Mesh(new THREE.SphereGeometry(.265,14,10,0,Math.PI*2,0,Math.PI*.65),hair);hairmesh.position.y=2.01;g.add(hairmesh);
- const armGeo=new THREE.CapsuleGeometry(.105,.48,4,8);
- for(const side of [-1,1]){const arm=new THREE.Mesh(armGeo,robe);arm.position.set(side*.42,1.35,0);arm.rotation.z=side*.16;g.add(arm);const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.13,.5,4,7),boot);leg.position.set(side*.17,.45,0);g.add(leg)}
- const wand=new THREE.Mesh(new THREE.CylinderGeometry(.018,.025,.66,6),mat('#b98d50'));wand.position.set(.47,1.25,-.2);wand.rotation.x=-.3;wand.rotation.z=-.2;g.add(wand);
- g.userData={head,torso,wand,arms:g.children.filter(o=>o.geometry===armGeo),phase:Math.random()*6};
+ const g=new THREE.Group();
+ const skin=mat(enemy?'#a0a0a5':'#d9a27f'),robe=mat(color),hair=mat(name==='Hermione'?'#4a2b18':name==='Pansy'?'#201820':name==='Blaise'?'#17151b':'#34251e'),boot=mat('#171722'),gold=mat('#b89a5a'),shirt=mat('#e5dfd1');
+ const part=(geo,material,x,y,z,rx=0,ry=0,rz=0)=>{const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);m.rotation.set(rx,ry,rz);m.castShadow=true;m.receiveShadow=true;g.add(m);return m};
+ const torso=part(new THREE.CapsuleGeometry(.34,.68,6,12),robe,0,1.2,0);
+ part(new THREE.ConeGeometry(.31,.44,4),robe,0,1.62,-.015,0,Math.PI/4);
+ part(new THREE.CylinderGeometry(.235,.29,.12,12),gold,0,.89,0);
+ part(new THREE.BoxGeometry(.16,.55,.035),shirt,0,1.34,.305);
+ part(new THREE.SphereGeometry(.255,24,18),skin,0,1.96,0);
+ // Orelhas, nariz, olhos e sobrancelhas dão volume e expressão ao rosto.
+ for(const side of [-1,1]){
+  part(new THREE.SphereGeometry(.065,10,8),skin,side*.25,1.96,0);
+  part(new THREE.SphereGeometry(.027,10,8),mat('#f4eee0'),side*.085,1.99,.222);
+  part(new THREE.SphereGeometry(.014,8,8),mat('#211a18'),side*.085,1.99,.245);
+  part(new THREE.CapsuleGeometry(.018,.065,3,6),hair,side*.085,2.055,.225,0,0,side*-.12);
+ }
+ part(new THREE.ConeGeometry(.045,.13,8),skin,0,1.94,.25,Math.PI/2);
+ // Cabelo em camadas, com franja e mechas laterais.
+ part(new THREE.SphereGeometry(.267,20,14,0,Math.PI*2,0,Math.PI*.62),hair,0,2.075,0);
+ for(const side of [-1,1])part(new THREE.CapsuleGeometry(.055,.23,4,8),hair,side*.205,1.99,.015,0,0,side*.12);
+ part(new THREE.CapsuleGeometry(.07,.16,4,8),hair,-.055,2.09,.205,0,0,-.45);
+ const armGeo=new THREE.CapsuleGeometry(.105,.42,5,10),arms=[];
+ for(const side of [-1,1]){
+  const arm=part(armGeo,robe,side*.405,1.34,.015,0,0,side*.2);arms.push(arm);
+  part(new THREE.SphereGeometry(.09,12,10),skin,side*.43,1.04,.04);
+  part(new THREE.CapsuleGeometry(.125,.47,5,10),boot,side*.16,.43,0);
+  part(new THREE.CylinderGeometry(.13,.14,.1,10),gold,side*.16,.19,0);
+ }
+ const wand=part(new THREE.CylinderGeometry(.014,.023,.7,8),mat('#9b7545'),.49,1.17,-.14,-.28,0,-.22);
+ part(new THREE.CapsuleGeometry(.11,.2,4,8),robe,0,1.67,-.01);
+ // Cache de referências para animação simples durante caminhada.
+ g.userData={head:g.children.find(o=>o.geometry&&o.geometry.type==='SphereGeometry'),torso,wand,arms,phase:Math.random()*6};
  return g;
 }
 function makeCreature(type){
