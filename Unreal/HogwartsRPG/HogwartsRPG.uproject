@@ -1,0 +1,13 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "",
+  "Category": "Games",
+  "Description": "RPG de fantasia escolar em terceira pessoa, com fases, missões e feitiços.",
+  "Modules": [
+    {
+      "Name": "HogwartsRPG",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ]
+}
