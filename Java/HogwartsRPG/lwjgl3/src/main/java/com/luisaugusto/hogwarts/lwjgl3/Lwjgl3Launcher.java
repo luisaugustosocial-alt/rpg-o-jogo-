@@ -20,7 +20,6 @@ public class Lwjgl3Launcher {
         configuration.useVsync(true);
         configuration.setForegroundFPS(60);
         configuration.setWindowedMode(1280, 720);
-        configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png");
         return configuration;
     }
 }
