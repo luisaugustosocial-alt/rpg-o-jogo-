@@ -27,10 +27,31 @@
 <div id="end" class="veil hidden"><div class="panel endpanel"><div class="eyebrow">Fim da missão</div><h1 id="endTitle">Muito bem!</h1><p id="endText"></p><button id="again" class="btn">Jogar novamente</button> <button id="endMenu" class="btn secondary">Escolher personagem</button></div></div>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+import { clone as cloneSkinned } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js';
 const $=id=>document.getElementById(id);
 const roster=[['Molly','🧶','#a64a30'],['Gina','🔥','#c74a34'],['Ced','🏆','#d9c8a2'],['Harry','⚡','#315a35'],['Tom','🐍','#344b5d'],['Pansy','🌙','#6d426f'],['Blaise','✨','#793e3c'],['Hermione','📚','#87502e'],['Lupin','🌕','#657d69']];
-let chosen=3,active=false,scene,camera,renderer,clock,player,enemies=[],spells=[],keys={},hp=100,mp=100,xp=0,kills=0,level=1,lastCast=0,toastTimer,raf,world=[],obstacleZones=[],waveQueue=[];
+let chosen=3,active=false,scene,camera,renderer,clock,player,enemies=[],spells=[],keys={},hp=100,mp=100,xp=0,kills=0,level=1,lastCast=0,toastTimer,raf,world=[],obstacleZones=[],waveQueue=[],gltfLoader,mixers=[],assetCache={},assetPending={};
 const mat=(c,r=.8,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
+const ASSETS={
+ Aragogue:'https://gobkit.com/freebies/animal007/Scorpion.glb',
+ Dementador:'https://gobkit.com/freebies/human011/SheetGhost.glb',
+ Trasgo:'https://gobkit.com/freebies/human011/StitchedBrute.glb'
+};
+function normalizeModel(root,height){
+ const b=new THREE.Box3().setFromObject(root),size=b.getSize(new THREE.Vector3()),center=b.getCenter(new THREE.Vector3());
+ const scale=height/(size.y||1);root.scale.setScalar(scale);root.position.set(-center.x*scale,-b.min.y*scale,-center.z*scale);
+ root.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;if(o.material){o.material.side=THREE.DoubleSide}}});
+}
+function loadAsset(url){if(assetCache[url])return Promise.resolve(assetCache[url]);if(assetPending[url])return assetPending[url];assetPending[url]=gltfLoader.loadAsync(url).then(g=>{assetCache[url]=g;delete assetPending[url];return g}).catch(err=>{console.warn('Modelo 3D não carregado:',url,err);delete assetPending[url];return null});return assetPending[url]}
+function upgradeEnemyModel(type,group){
+ const url=ASSETS[type];if(!url||!gltfLoader)return;
+ loadAsset(url).then(gltf=>{if(!gltf||!group.parent)return;const root=cloneSkinned(gltf.scene);normalizeModel(root,type==='Aragogue'?2.2:type==='Dementador'?3.2:3.0);group.clear();group.add(root);group.userData.realModel=true;
+  if(gltf.animations&&gltf.animations.length){const mixer=new THREE.AnimationMixer(root);mixers.push(mixer);const preferred=type==='Aragogue'?'Walk':type==='Dementador'?'Idle':'Walk';const clip=THREE.AnimationClip.findByName(gltf.animations,preferred)||gltf.animations[0];if(clip)mixer.clipAction(clip).play();group.userData.mixer=mixer}
+ }).catch(()=>{});
+}
+function addEnvironmentModel(url,x,y,z,scale,rotation=0){loadAsset(url).then(gltf=>{if(!gltf||!scene)return;const root=cloneSkinned(gltf.scene);normalizeModel(root,scale);root.position.x+=x;root.position.y+=y;root.position.z+=z;root.rotation.y=rotation;scene.add(root)});}
+
 const mats={grass:mat('#243c31'),stone:mat('#514b58'),dark:mat('#171521'),gold:mat('#c9a55b',.35,.5),wood:mat('#4b3026'),skin:mat('#d5a27f'),robe:mat('#29354c'),leaf:mat('#314d39'),white:mat('#ddd5c1'),red:mat('#873c47'),blue:mat('#3e5688'),purple:mat('#55406f')};
 const box=(w,h,d,m,x,y,z,group=scene)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;group.add(o);return o};
 function makeCharacter(name,color,enemy=false){
@@ -70,9 +91,10 @@ function makeCreature(type){
   for(const side of [-1,1]){limbs.push(p(new THREE.CapsuleGeometry(.16,.6,5,10),troll,side*.56,1.1,0,0,0,side*.25));p(new THREE.CapsuleGeometry(.16,.38,5,10),troll,side*.18,.36,0);p(new THREE.BoxGeometry(.27,.16,.42),mat('#34302a'),side*.18,.12,.1);p(new THREE.SphereGeometry(.055,10,8),mat('#d7d09d'),side*.12,1.68,.33)}
   p(new THREE.CylinderGeometry(.1,.2,.85,9),club,.82,.95,.16,0,0,-.7);for(let n=0;n<4;n++)p(new THREE.ConeGeometry(.075,.2,6),club,.82+n*.04,1.1+n*.12,.29);
  }
- g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});g.userData={type,phase:Math.random()*8,joints,limbs};return g;
+ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});g.userData={type,phase:Math.random()*8,joints,limbs};upgradeEnemyModel(type,g);return g;
 }
 function buildWorld(){
+ gltfLoader=new GLTFLoader();mixers=[];assetCache={};assetPending={};
  scene=new THREE.Scene();scene.background=new THREE.Color('#9aaab0');scene.fog=new THREE.FogExp2('#9aaab0',.014);
  camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,180);renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;$('game').replaceChildren(renderer.domElement);
  scene.add(new THREE.HemisphereLight('#cbdaf2','#283021',2.0));const sun=new THREE.DirectionalLight('#ffdfac',3.1);sun.position.set(-18,28,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-35;sun.shadow.camera.right=35;sun.shadow.camera.top=35;sun.shadow.camera.bottom=-35;scene.add(sun);
@@ -90,6 +112,9 @@ function buildWorld(){
  for(let i=0;i<65;i++){const f=new THREE.Mesh(fireflyGeo,fireflyMat);f.position.set((Math.random()-.5)*30,.7+Math.random()*4,-Math.random()*65);scene.add(f);world.push({object:f,base:f.position.clone(),phase:Math.random()*8,speed:.5+Math.random()})}
  // Árvores antigas em camadas
  for(let i=0;i<95;i++){let x=(Math.random()-.5)*78,z=10-Math.random()*95;if(Math.abs(x)<5&&z> -60)continue;const trunk= new THREE.Mesh(new THREE.CylinderGeometry(.18,.35,2.8,6),mats.wood);trunk.position.set(x,1.4,z);trunk.castShadow=true;scene.add(trunk);for(let j=0;j<3;j++){const crown=new THREE.Mesh(new THREE.ConeGeometry(1.3-j*.15,2.6,7),mat(['#243b32','#304a37','#3d5038'][Math.floor(Math.random()*3)]));crown.position.set(x,2.9+j*1.15,z);crown.castShadow=true;scene.add(crown)}}
+ // Modelos 3D externos de árvores e rochas (licença CC0), combinados ao cenário artesanal.
+ for(let i=0;i<18;i++){const side=i%2?1:-1;addEnvironmentModel('https://gobkit.com/freebies/environment/TreeHigh001.glb',side*(7+Math.random()*18),0,-4-i*4.6,5+Math.random()*2,Math.random()*Math.PI)}
+ for(let i=0;i<10;i++){const side=i%2?1:-1;addEnvironmentModel('https://gobkit.com/freebies/environment/Rock002.glb',side*(4+Math.random()*5),0,-7-i*6.2,.9+Math.random()*.8,Math.random()*Math.PI)}
  // station platforms and rails
  for(let s of [-1,1]){box(2.3,.5,35,mat('#7b766e'),s*4,.25,17);box(.14,.08,36,mat('#292c33',.3,.7),s*4,.55,17)}
  for(let z=-1;z<36;z+=1.25)box(7,.12,.24,mats.wood,0,.16,z);
@@ -118,7 +143,7 @@ function castSpell(){if(!active||performance.now()-lastCast<380)return;lastCast=
 function finish(win){active=false;$('hud').classList.add('hidden');$('end').classList.remove('hidden');$('endTitle').textContent=win?'Vitória mágica!':'Você foi derrotado';$('endText').textContent=win?'Você protegeu a floresta e derrotou as criaturas. + '+xp+' XP. Que sua próxima aventura seja ainda maior!':'As criaturas venceram desta vez. Reúna suas forças e tente novamente.'}
 function attackPlayer(e,dt){if(e.attack>0)return;e.attack=1.25;hp-=e.type==='Dementador'?12:9;say(e.type+' atacou você!');if(hp<=0){hp=0;updateHud();finish(false)}}
 function animate(){
- raf=requestAnimationFrame(animate);if(!renderer||!scene)return;const dt=Math.min(clock.getDelta()||0,.04),t=clock.elapsedTime;
+ raf=requestAnimationFrame(animate);if(!renderer||!scene)return;const dt=Math.min(clock.getDelta()||0,.04),t=clock.elapsedTime;for(const mixer of mixers)mixer.update(dt);
  if(active&&player){
   const move=new THREE.Vector3();if(keys.w||keys.ArrowUp)move.z-=1;if(keys.s||keys.ArrowDown)move.z+=1;if(keys.a||keys.ArrowLeft)move.x-=1;if(keys.d||keys.ArrowRight)move.x+=1;
   if(move.lengthSq()>0){move.normalize();const nextX=player.position.x+move.x*7*dt,nextZ=player.position.z+move.z*7*dt;let blocked=false;for(const o of obstacleZones){if(Math.hypot(nextX-o.x,nextZ-o.z)<o.r+.45){blocked=true;break}}if(!blocked){player.position.x=nextX;player.position.z=nextZ}player.rotation.y=Math.atan2(-move.x,-move.z)}
