@@ -124,7 +124,10 @@ function animate(){
   if(move.lengthSq()>0){move.normalize();const nextX=player.position.x+move.x*7*dt,nextZ=player.position.z+move.z*7*dt;let blocked=false;for(const o of obstacleZones){if(Math.hypot(nextX-o.x,nextZ-o.z)<o.r+.45){blocked=true;break}}if(!blocked){player.position.x=nextX;player.position.z=nextZ}player.rotation.y=Math.atan2(-move.x,-move.z)}
   player.position.x=THREE.MathUtils.clamp(player.position.x,-23,23);player.position.z=THREE.MathUtils.clamp(player.position.z,-65,38);
   player.position.y=keys.jump?Math.max(0,Math.sin(t*9)*1.2):0;
-  if(!keys.jump){}player.userData.torso.rotation.z=Math.sin(t*8)*(move.lengthSq()>.1?.06:0);
+  const walking=move.lengthSq()>.1,phase=t*9+player.userData.phase;
+  player.userData.torso.rotation.z=Math.sin(phase)*(walking?.055:Math.sin(t*1.7)*.012);
+  player.userData.arms.forEach((arm,i)=>{arm.rotation.x=walking?Math.sin(phase+i*Math.PI)*.72:Math.sin(t*1.5+i)*.035;arm.rotation.z=(i===0?1:-1)*(walking?.08:0)});
+  player.userData.legs.forEach((leg,i)=>{leg.rotation.x=walking?Math.sin(phase+i*Math.PI)*.65:0});
   camera.position.lerp(new THREE.Vector3(player.position.x,player.position.y+5.2,player.position.z+9.2),.09);camera.lookAt(player.position.x,player.position.y+1.2,player.position.z-2);
   mp=Math.min(100,mp+dt*4.2);
   for(const e of enemies){if(!e.alive)continue;e.attack-=dt;const dx=player.position.x-e.group.position.x,dz=player.position.z-e.group.position.z,dist=Math.hypot(dx,dz);if(dist>1.7){const speed=e.speed*(dist<12?1.45:1);e.group.position.x+=dx/(dist||1)*speed*dt;e.group.position.z+=dz/(dist||1)*speed*dt;e.group.rotation.y=Math.atan2(-dx,-dz)}else attackPlayer(e,dt);e.group.position.y=e.type==='Dementador'?1.2+Math.sin(t*2+e.group.userData.phase)*.25:Math.abs(Math.sin(t*5+e.group.userData.phase))*.03;
