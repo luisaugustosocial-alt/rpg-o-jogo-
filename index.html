@@ -1,182 +1,105 @@
 <!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#100c20"><meta name="description" content="RPG: A Jornada de Hogwarts — atravesse a Floresta Proibida, enfrente criaturas e alcance o castelo.">
-<title>RPG: A Jornada de Hogwarts</title>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Hogwarts — A Jornada</title><meta name="theme-color" content="#101321">
 <style>
-:root{--gold:#e8c77b;--ink:#100c20;--panel:rgba(14,10,27,.91);--cream:#f5e9cc}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#090914;color:var(--cream);font-family:Georgia,'Times New Roman',serif}button{font:inherit;cursor:pointer;color:inherit}#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}.veil{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(ellipse at center,rgba(28,20,48,.72),rgba(5,5,12,.94));overflow:auto}.panel{width:min(760px,100%);max-height:94dvh;overflow:auto;padding:clamp(18px,4vw,34px);border:1px solid #a98b4e;border-radius:16px;background:linear-gradient(145deg,rgba(28,21,44,.97),rgba(8,9,20,.97));box-shadow:0 0 55px #000, inset 0 0 25px #92723b16;text-align:center}.eyebrow{letter-spacing:.25em;text-transform:uppercase;font:11px Arial,sans-serif;color:var(--gold)}h1{font-size:clamp(32px,7vw,58px);line-height:1.02;margin:10px 0;color:#f3d899;text-shadow:0 3px 22px #c99d4a44}h2{font-size:clamp(22px,4vw,32px);color:var(--gold);margin:8px 0 16px}.sub{font:14px/1.6 Arial,sans-serif;color:#d0c5df;max-width:560px;margin:0 auto 20px}.dedication{font:italic 14px/1.6 Georgia,serif;border-block:1px solid #c5a05a55;padding:12px 8px;margin:16px auto 20px;max-width:610px;color:#f4e6c7}.characters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:15px 0 20px}.char{min-height:86px;padding:10px 4px;border:1px solid #675574;border-radius:10px;background:linear-gradient(#2b203e,#171326);font-size:13px;transition:.15s}.char .sigil{display:block;font-size:26px;margin-bottom:5px}.char.selected{border-color:#f2d28a;box-shadow:0 0 16px #d7ad6044;background:#47354c}.btn{border:1px solid #f1d28c;border-radius:9px;background:linear-gradient(#d9b66c,#98723a);color:#18101d;font-weight:bold;padding:13px 24px;box-shadow:0 4px 0 #513c27}.btn:active{transform:translateY(2px);box-shadow:0 2px 0 #513c27}.btn.secondary{background:#211a31;color:#f6e6c3;border-color:#806c9b;box-shadow:none}.hidden{display:none!important}#hud{position:fixed;inset:0;pointer-events:none;font:12px Arial,sans-serif;text-shadow:0 2px 4px #000}#hud button,#hud .interactive{pointer-events:auto}.topbar{position:absolute;top:12px;left:12px;right:12px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.statbox{min-width:145px;max-width:48%;padding:10px 12px;border:1px solid #c4a36377;border-radius:10px;background:rgba(9,8,19,.76);backdrop-filter:blur(8px)}.statname{font-weight:bold;color:#f5dfaa;margin-bottom:5px}.meter{height:7px;background:#3a293e;border-radius:8px;overflow:hidden;margin:4px 0 7px}.fill{height:100%;width:100%;transition:width .15s}.hp{background:linear-gradient(90deg,#9b263c,#f17b75)}.mp{background:linear-gradient(90deg,#3268c6,#83d9ff)}#mission{position:absolute;top:110px;left:50%;transform:translateX(-50%);padding:9px 14px;max-width:85vw;border:1px solid #d5b66a66;border-radius:20px;background:#0b0918bb;text-align:center;color:#f5e6c8;font-size:12px}#toast{position:absolute;top:155px;left:50%;transform:translateX(-50%);padding:10px 16px;background:#100c20e8;border:1px solid #cba45e;border-radius:10px;color:#ffe8ac;text-align:center;max-width:85vw;opacity:0;transition:opacity .2s}#toast.show{opacity:1}.bottomhint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:8px 12px;border-radius:9px;background:#090814a8;color:#ddd0b7;font-size:11px}.mobile-controls{position:absolute;inset:auto 0 18px;display:none;justify-content:space-between;align-items:end;padding:0 18px;pointer-events:none}.pad,.actions{display:grid;gap:7px;pointer-events:auto}.pad{grid-template-columns:48px 48px 48px;grid-template-rows:48px 48px}.pad button,.actions button{width:48px;height:48px;border:1px solid #e0c17a99;border-radius:14px;background:#171225d9;backdrop-filter:blur(5px);font-size:18px}.pad .up{grid-column:2}.pad .left{grid-column:1;grid-row:2}.pad .down{grid-column:2;grid-row:2}.pad .right{grid-column:3;grid-row:2}.actions{grid-template-columns:repeat(2,48px)}.actions button{font-size:12px;color:#ffe5a5}.mini{border:1px solid #a58b59;background:#171226c9;padding:8px 11px;border-radius:8px;font:12px Arial,sans-serif}.endpanel p{font:14px/1.6 Arial,sans-serif;color:#ddd1e4}@media(max-width:620px){.characters{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.char{min-height:72px}.char .sigil{font-size:22px}.panel{padding:18px 14px}.mobile-controls{display:flex}.bottomhint{bottom:128px;font-size:10px}.topbar{top:8px;left:8px;right:8px}.statbox{min-width:0;padding:8px;font-size:11px}.statbox:first-child{width:53%}.statbox:last-child{width:42%}#mission{top:104px;font-size:11px}#toast{top:145px}}
-</style>
-</head>
-<body>
-<div id="game"></div>
-<div id="menu" class="veil"><div class="panel">
-<div class="eyebrow">Uma aventura mágica em 3D</div><h1>A Jornada<br>de Hogwarts</h1>
-<p class="sub">A estação ficou para trás. Atravessa a Floresta Proibida, enfrenta as criaturas que espreitam entre as árvores e encontra o caminho até o castelo de Hogwarts.</p>
-<div class="dedication">“Dedico para os melhores Potterheads e amigos: Lohana, Paulinha, Marina, Natalia, Eloa, Kauan, Alina, Stephanie.”</div>
-<h2>Escolha seu personagem</h2><div id="characters" class="characters"></div>
-<button id="start" class="btn">✦ Entrar no mundo mágico ✦</button>
-<p class="sub" style="margin-top:16px;font-size:11px">Computador: WASD/setas para mover · Espaço para pular · E para lançar feitiço<br>Celular: use os controles na tela. Feito por fã, sem vínculo oficial com Harry Potter.</p>
-</div></div>
-<div id="hud" class="hidden">
-<div class="topbar"><div class="statbox"><div class="statname" id="heroName">Bruxo</div><div>VIDA</div><div class="meter"><div id="hpFill" class="fill hp"></div></div><div>MAGIA ILIMITADA</div><div class="meter"><div id="mpFill" class="fill mp"></div></div><div id="level">Nível 1 · 0 XP</div></div><div class="statbox" style="text-align:right"><div class="statname">MISSÃO</div><div id="quest">Derrote as criaturas</div><div style="margin-top:7px">Criaturas derrotadas: <b id="kills">0</b>/5</div><button id="back" class="mini interactive" style="margin-top:8px">Menu</button></div></div>
-<div id="mission">Explore a floresta encantada</div><div id="toast"></div>
-<div class="bottomhint">WASD / setas · Espaço: pular · E ou clique: feitiço</div>
-<div class="mobile-controls"><div class="pad"><button class="up" data-key="w">▲</button><button class="left" data-key="a">◀</button><button class="down" data-key="s">▼</button><button class="right" data-key="d">▶</button></div><div class="actions"><button id="mobileSpell">FEITIÇO</button><button id="mobileJump">PULAR</button></div></div>
-</div>
-<div id="end" class="veil hidden"><div class="panel endpanel"><div class="eyebrow">Fim da missão</div><h1 id="endTitle">Muito bem!</h1><p id="endText"></p><button id="again" class="btn">Jogar novamente</button> <button id="endMenu" class="btn secondary">Escolher personagem</button></div></div>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101321;color:#f5e9d0;font-family:Georgia,serif}#stage{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}.screen{position:fixed;inset:0;display:grid;place-items:center;padding:18px;background:radial-gradient(ellipse,#171d2bcc,#080b14f2)}.panel{width:min(780px,96vw);max-height:94vh;overflow:auto;padding:30px;border:1px solid #b69b65;background:linear-gradient(145deg,#20283aef,#0c111df7);box-shadow:0 20px 90px #000c;border-radius:14px;text-align:center}.kicker{font:11px Arial;letter-spacing:.32em;color:#d5b878;text-transform:uppercase}h1{font-size:clamp(38px,7vw,68px);line-height:.98;margin:12px 0;color:#f4dfac;text-shadow:0 5px 30px #d6b76a44}h2{color:#dfc78e}.intro{font:14px/1.7 Arial;color:#d4d7dc;max-width:610px;margin:15px auto}.dedication{font-style:italic;color:#d9c7a5;border-block:1px solid #8c784c;padding:12px;margin:18px auto;max-width:620px}.roster{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:20px 0}.person{border:1px solid #65718a;background:linear-gradient(#38445a,#182236);border-radius:9px;padding:12px 4px;color:#f4e8cb;cursor:pointer;min-height:80px}.person.active{border:2px solid #e2c47e;box-shadow:0 0 18px #d7b56b55}.person span{display:block;font-size:25px;margin-bottom:5px}.btn{border:1px solid #e4ca8a;background:linear-gradient(#e3c77e,#997644);color:#171925;border-radius:7px;padding:13px 25px;font-weight:bold;cursor:pointer}.hidden{display:none!important}#hud{position:fixed;inset:0;pointer-events:none;font:12px Arial;text-shadow:0 2px 5px #000}.hudbox{position:absolute;top:12px;padding:12px;background:#101725c9;border:1px solid #b79c65a6;border-radius:9px;backdrop-filter:blur(8px)}#stats{left:12px;width:190px}#mission{right:12px;max-width:230px;text-align:right}#objective{position:absolute;top:100px;left:50%;transform:translateX(-50%);padding:10px 18px;border-radius:30px;background:#101725d9;border:1px solid #b79c65;color:#f4dfad;text-align:center;max-width:90vw}.bar{height:7px;background:#3b3340;border-radius:8px;margin:5px 0 10px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#9f3349,#ed8a7b);width:100%}#magic{background:linear-gradient(90deg,#3c6fc1,#91e1ff)}#hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);padding:8px 14px;background:#101725c9;border-radius:8px;color:#e5d9c2;white-space:nowrap}.mobile{display:none;position:absolute;bottom:18px;left:15px;right:15px;justify-content:space-between;pointer-events:auto}.pad{display:grid;grid-template:46px 46px/46px 46px 46px;gap:4px}.pad button,.act button{background:#182236dd;color:#f3dfad;border:1px solid #c4a96c;border-radius:10px;width:46px;height:46px}.pad .up{grid-column:2}.pad .left{grid-column:1;grid-row:2}.pad .down{grid-column:2;grid-row:2}.pad .right{grid-column:3;grid-row:2}.act{display:flex;gap:7px;align-items:end}.act button{width:65px;font-size:10px}.end p{font:14px/1.7 Arial;color:#ddd}@media(max-width:620px){.panel{padding:20px 14px}.roster{grid-template-columns:repeat(3,1fr)}.mobile{display:flex}#hint{bottom:122px;font-size:10px}#stats{width:145px;font-size:10px;padding:9px}#mission{max-width:150px;font-size:10px;padding:9px}#objective{top:105px;font-size:11px}}
+</style></head><body><div id="stage"></div>
+<div id="menu" class="screen"><div class="panel"><div class="kicker">Uma aventura mágica em mundo aberto</div><h1>Hogwarts<br>— A Jornada —</h1><p class="intro">A viagem terminou. Agora começa a verdadeira aventura. Explore a Floresta Proibida, sobreviva às criaturas que guardam seus caminhos e encontre a passagem para o castelo de Hogwarts.</p><div class="dedication">“Para os melhores Potterheads e amigos: Lohana, Paulinha, Marina, Natalia, Eloa, Kauan, Alina e Stephanie.”</div><h2>Escolha seu personagem</h2><div class="roster" id="roster"></div><button class="btn" id="play">COMEÇAR A AVENTURA</button><p class="intro" style="font-size:11px">WASD ou setas: andar · Espaço: pular · E/clique: lançar feitiço · Celular: controles na tela</p></div></div>
+<div id="hud" class="hidden"><div id="stats" class="hudbox"><b id="hero">Bruxo</b><div style="margin-top:9px">VIDA</div><div class="bar"><div id="life" class="fill"></div></div><div>MAGIA</div><div class="bar"><div id="magic" class="fill"></div></div><div id="xp">Nível 1 · 0 XP</div></div><div id="mission" class="hudbox"><b>MISSÃO</b><p id="quest">Atravesse a floresta</p><p id="count">Criaturas: 0/5</p></div><div id="objective">Encontre a trilha que leva a Hogwarts</div><div id="hint">WASD / setas · Espaço pular · E lançar feitiço</div><div class="mobile"><div class="pad"><button class="up" data-k="w">▲</button><button class="left" data-k="a">◀</button><button class="down" data-k="s">▼</button><button class="right" data-k="d">▶</button></div><div class="act"><button id="spell">FEITIÇO</button><button id="jump">PULAR</button></div></div></div>
+<div id="ending" class="screen hidden"><div class="panel end"><div class="kicker">Fim da jornada</div><h1 id="endtitle">Vitória!</h1><p id="endtext"></p><button class="btn" id="retry">JOGAR NOVAMENTE</button> <button class="btn" id="tomenu" style="background:#29344a;color:#f3e7c8">MENU</button></div></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
-import { clone as cloneSkinned } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/utils/SkeletonUtils.js';
+import * as THREE from 'three';
 const $=id=>document.getElementById(id);
-const roster=[['Molly','🧶','#a64a30'],['Gina','🔥','#c74a34'],['Ced','🏆','#d9c8a2'],['Harry','⚡','#315a35'],['Tom','🐍','#344b5d'],['Pansy','🌙','#6d426f'],['Blaise','✨','#793e3c'],['Hermione','📚','#87502e'],['Lupin','🌕','#657d69']];
-let chosen=3,active=false,scene,camera,renderer,clock,player,enemies=[],spells=[],keys={},hp=100,mp=100,xp=0,kills=0,level=1,lastCast=0,toastTimer,raf,world=[],obstacleZones=[],waveQueue=[],gltfLoader,mixers=[],assetCache={},assetPending={};
+const cast=[['Molly','🧶','#793e35'],['Gina','🔥','#8e302c'],['Ced','🏆','#b9a27b'],['Harry','⚡','#273d31'],['Tom','🐍','#243746'],['Pansy','🌙','#49344f'],['Blaise','✨','#593a37'],['Hermione','📚','#75502e'],['Lupin','🌕','#52634f']];
+let selected=3,scene,camera,renderer,clock,hero,active=false,hp=100,mp=100,xp=0,kills=0,level=1,keys={},foes=[],bolts=[],trees=[],particles=[],lastCast=0,spawned=0,finishTimer;
 const mat=(c,r=.8,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
-const ASSETS={
- Aragogue:'https://gobkit.com/freebies/animal007/Scorpion.glb',
- Dementador:'https://gobkit.com/freebies/human011/SheetGhost.glb',
- Trasgo:'https://gobkit.com/freebies/human011/StitchedBrute.glb'
-};
-function normalizeModel(root,height){
- const b=new THREE.Box3().setFromObject(root),size=b.getSize(new THREE.Vector3()),center=b.getCenter(new THREE.Vector3());
- const scale=height/(size.y||1);root.scale.setScalar(scale);root.position.set(-center.x*scale,-b.min.y*scale,-center.z*scale);
- root.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;if(o.material){o.material.side=THREE.DoubleSide}}});
+const M={bark:mat('#38291f'),leaf1:mat('#172c27'),leaf2:mat('#244139'),leaf3:mat('#314a3a'),stone:mat('#55565d'),gold:mat('#c9a965',.32,.55),robe:mat('#28364b'),skin:mat('#d8a27d'),hair:mat('#33251e'),iron:mat('#292d38',.35,.65)};
+function mesh(g,m,parent,x=0,y=0,z=0){let o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
+function lathe(points,m,parent,x,y,z){return mesh(new THREE.LatheGeometry(points.map(p=>new THREE.Vector2(...p)),16),m,parent,x,y,z)}
+function makeHero(){
+ const g=new THREE.Group(),robe=mat(cast[selected][2]),skin=mat(selected===0?'#e7c1a4':selected===4?'#c58c68':'#d6a17d'),hair=mat(selected===7?'#5b351d':selected===5?'#241c20':'#30221d'),dark=mat('#191d27'),trim=mat('#c3a45e',.4,.4);
+ // robe with shaped shoulders and flared hem
+ lathe([[.42,0],[.48,.12],[.38,.55],[.28,1.05],[.25,1.38],[.32,1.48],[.39,1.32],[.36,1.0],[.31,.55],[.43,.1]],robe,g,0,0,0);
+ mesh(new THREE.SphereGeometry(.25,24,18),skin,g,0,1.67,0);
+ // neck, nose, ears, eyes, brows, mouth
+ mesh(new THREE.CylinderGeometry(.09,.11,.22,12),skin,g,0,1.47,0);
+ mesh(new THREE.SphereGeometry(.065,12,10),skin,g,0,1.68,.245);
+ for(const s of [-1,1]){mesh(new THREE.SphereGeometry(.055,10,8),skin,g,s*.25,1.67,0);mesh(new THREE.SphereGeometry(.038,12,8),mat('#f0e9df'),g,s*.09,1.69,.22);mesh(new THREE.SphereGeometry(.018,10,8),mat('#25212a'),g,s*.09,1.69,.253);mesh(new THREE.CapsuleGeometry(.014,.07,3,6),hair,g,s*.09,1.75,.225,0,0,s*-.15)}
+ mesh(new THREE.ConeGeometry(.045,.12,8),skin,g,0,1.64,.29,Math.PI/2);
+ // hair cap and locks
+ mesh(new THREE.SphereGeometry(.265,20,14,0,Math.PI*2,0,Math.PI*.57),hair,g,0,1.81,-.015);
+ for(let i=0;i<7;i++){let a=(i/7)*Math.PI*2;mesh(new THREE.CapsuleGeometry(.045,.18+(i%3)*.06,4,8),hair,g,Math.sin(a)*.2,1.78,Math.cos(a)*.18,0,0,-Math.sin(a)*.25)}
+ // cloak front panels, collar, tie, belt
+ mesh(new THREE.ConeGeometry(.24,.36,4),robe,g,-.13,1.3,.2,0,Math.PI/4);
+ mesh(new THREE.ConeGeometry(.24,.36,4),robe,g,.13,1.3,.2,0,Math.PI/4);
+ mesh(new THREE.BoxGeometry(.08,.42,.025),trim,g,0,1.17,.335);
+ mesh(new THREE.TorusGeometry(.39,.025,6,24),trim,g,0,.22,0,Math.PI/2);
+ // arms, hands, wand
+ const arms=[];
+ for(const s of [-1,1]){const a=new THREE.Group();a.position.set(s*.31,1.35,0);g.add(a);mesh(new THREE.CapsuleGeometry(.105,.48,6,12),robe,a,s*.03,-.22,0,0,0,s*-.2);mesh(new THREE.SphereGeometry(.085,12,10),skin,a,s*.08,-.5,.04);arms.push(a)}
+ const wand=mesh(new THREE.CylinderGeometry(.012,.022,.72,8),mat('#805b36'),g,.48,1.03,.06,0,0,-.25);
+ // legs and boots visible below robe
+ const legs=[];for(const s of [-1,1]){const l=new THREE.Group();l.position.set(s*.17,.2,0);g.add(l);mesh(new THREE.CapsuleGeometry(.105,.42,5,10),dark,l,0,-.17,0);mesh(new THREE.BoxGeometry(.19,.12,.3),dark,l,0,-.4,.08);legs.push(l)}
+ g.userData={arms,legs,wand,phase:Math.random()*6};return g;
 }
-function loadAsset(url){if(assetCache[url])return Promise.resolve(assetCache[url]);if(assetPending[url])return assetPending[url];assetPending[url]=gltfLoader.loadAsync(url).then(g=>{assetCache[url]=g;delete assetPending[url];return g}).catch(err=>{console.warn('Modelo 3D não carregado:',url,err);delete assetPending[url];return null});return assetPending[url]}
-function upgradeEnemyModel(type,group){
- const url=ASSETS[type];if(!url||!gltfLoader)return;
- loadAsset(url).then(gltf=>{if(!gltf||!group.parent)return;const root=cloneSkinned(gltf.scene);normalizeModel(root,type==='Aragogue'?2.2:type==='Dementador'?3.2:3.0);group.clear();group.add(root);group.userData.realModel=true;
-  if(gltf.animations&&gltf.animations.length){const mixer=new THREE.AnimationMixer(root);mixers.push(mixer);const preferred=type==='Aragogue'?'Walk':type==='Dementador'?'Idle':'Walk';const clip=THREE.AnimationClip.findByName(gltf.animations,preferred)||gltf.animations[0];if(clip)mixer.clipAction(clip).play();group.userData.mixer=mixer}
- }).catch(()=>{});
+function tree(x,z,s=1){const g=new THREE.Group();scene.add(g);mesh(new THREE.CylinderGeometry(.2*s,.38*s,3.4*s,9),M.bark,g,0,1.7*s,0);for(let i=0;i<4;i++){const crown=mesh(new THREE.ConeGeometry((1.5-i*.18)*s,2.7*s,9),[M.leaf1,M.leaf2,M.leaf3][i%3],g,0,(3+i*1.05)*s,0);crown.rotation.y=i*.7}g.position.set(x,0,z);trees.push(g)}
+function tower(x,z,h,r=1.6){const g=new THREE.Group();scene.add(g);const stone=mat('#65636a'),shadow=mat('#3a3d49'),roof=mat('#272d3b');mesh(new THREE.CylinderGeometry(r*.8,r,h,12),stone,g,0,h/2,0);for(let i=0;i<8;i++){let a=i*Math.PI/4;mesh(new THREE.BoxGeometry(.38,.9,.38),shadow,g,Math.cos(a)*r*.75,h-.25,Math.sin(a)*r*.75)}mesh(new THREE.CylinderGeometry(r*1.12,r*1.12,.25,12),M.gold,g,0,h-.3,0);mesh(new THREE.ConeGeometry(r*1.05,h*.34,12),roof,g,0,h+h*.17,0);for(let y=2;y<h-1;y+=2.2){const win=mesh(new THREE.BoxGeometry(.36,.9,.12),mat('#f5c978',.25),g,0,y,r*.98);win.position.z=r*.98}g.position.set(x,0,z)}
+function build(){
+ scene=new THREE.Scene();scene.background=new THREE.Color('#a7b7c2');scene.fog=new THREE.FogExp2('#a7b7c2',.009);
+ camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,220);
+ renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.13;$('stage').replaceChildren(renderer.domElement);
+ scene.add(new THREE.HemisphereLight('#d9e7ff','#263126',2));let sun=new THREE.DirectionalLight('#ffe0b0',3.2);sun.position.set(-25,40,12);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-55;sun.shadow.camera.right=55;sun.shadow.camera.top=55;sun.shadow.camera.bottom=-55;scene.add(sun);
+ const ground=mesh(new THREE.PlaneGeometry(240,240),mat('#263b30'),scene,0,-.08,-25);ground.rotation.x=-Math.PI/2;
+ const path=mesh(new THREE.PlaneGeometry(7,125),mat('#62594b'),scene,0,-.035,-32);path.rotation.x=-Math.PI/2;
+ // Ancient forest with dense layers, roots, mushrooms and glowing pools
+ for(let i=0;i<150;i++){let x=(Math.random()-.5)*90,z=18-Math.random()*125;if(Math.abs(x)<5)continue;tree(x,z,.75+Math.random()*.85)}
+ for(let i=0;i<35;i++){let x=(Math.random()-.5)*14,z=-Math.random()*85;const rock=mesh(new THREE.DodecahedronGeometry(.6+Math.random()*.9,1),mat('#4a4d4e'),scene,x,.4,z);rock.scale.y=.65}
+ for(let i=0;i<38;i++){let x=(Math.random()-.5)*18,z=-Math.random()*90;const stem=mesh(new THREE.CylinderGeometry(.04,.06,.3,8),mat('#c9c4a1'),scene,x,.15,z);const cap=mesh(new THREE.SphereGeometry(.22,12,8,0,Math.PI*2,0,Math.PI/2),mat(i%3?'#a64d78':'#df9c58'),scene,x,.32,z)}
+ for(let i=0;i<45;i++){let x=(Math.random()-.5)*24,z=-Math.random()*100;const p=mesh(new THREE.SphereGeometry(.045,8,8),new THREE.MeshBasicMaterial({color:'#f9e8a4'}),scene,x,1+Math.random()*5,z);particles.push({p,y:p.position.y,phase:Math.random()*8})}
+ // Hogwarts: great hall, towers, walls, windows, bridge and courtyard
+ const castle=mat('#777780'),wall=mat('#60636e'),roof=mat('#303746');
+ mesh(new THREE.BoxGeometry(27,13,14),castle,scene,0,6.5,-112);
+ mesh(new THREE.BoxGeometry(34,1,18),wall,scene,0,13,-112);
+ for(let x=-13;x<=13;x+=4){mesh(new THREE.BoxGeometry(.65,2,.65),M.gold,scene,x,14,-112)}
+ tower(-15,-104,19,2.1);tower(15,-104,22,2.3);tower(-8,-119,16,1.7);tower(8,-119,18,1.8);tower(0,-101,25,2.4);
+ for(let x=-10;x<=10;x+=4)for(let y=3;y<=10;y+=3){const w=mesh(new THREE.BoxGeometry(1,1.8,.15),mat('#f7c76f',.25),scene,x,y,-104.9);mesh(new THREE.ConeGeometry(.65,.65,4),roof,scene,x,y+1.1,-104.9)}
+ // arched entry gateway
+ mesh(new THREE.BoxGeometry(8,7,2),wall,scene,0,3.5,-92);mesh(new THREE.BoxGeometry(4,5,.3),mat('#171b27'),scene,0,2.5,-90.85);mesh(new THREE.TorusGeometry(2, .24,8,24,Math.PI),M.gold,scene,0,5,-90.7,0,0,Math.PI);
+ // bridge leading to castle
+ for(let i=0;i<8;i++){mesh(new THREE.BoxGeometry(7,.4,2.2),mat('#77706a'),scene,0,.1,-65-i*3)}
+ for(let s of [-1,1]){mesh(new THREE.BoxGeometry(.3,1,27),wall,scene,s*3.6,.8,-75);for(let z=-64;z>-91;z-=4)mesh(new THREE.BoxGeometry(.6,1.3,.6),M.gold,scene,s*3.6,1.3,z)}
+ // ruined stone arch in forest
+ for(let s of [-1,1]){mesh(new THREE.BoxGeometry(.65,5,.8),mat('#64616a'),scene,s*4,2.5,-43);mesh(new THREE.BoxGeometry(9,.7,1),mat('#64616a'),scene,0,5,-43)}
+ // fallen logs and roots
+ for(let i=0;i<10;i++){const log=mesh(new THREE.CylinderGeometry(.18,.3,4,9),M.bark,scene,(i%2?1:-1)*(2+Math.random()*4),.3,-10-i*8);log.rotation.z=Math.PI/2}
 }
-function addEnvironmentModel(url,x,y,z,scale,rotation=0){loadAsset(url).then(gltf=>{if(!gltf||!scene)return;const root=cloneSkinned(gltf.scene);normalizeModel(root,scale);root.position.x+=x;root.position.y+=y;root.position.z+=z;root.rotation.y=rotation;scene.add(root)});}
-
-const mats={grass:mat('#243c31'),stone:mat('#514b58'),dark:mat('#171521'),gold:mat('#c9a55b',.35,.5),wood:mat('#4b3026'),skin:mat('#d5a27f'),robe:mat('#29354c'),leaf:mat('#314d39'),white:mat('#ddd5c1'),red:mat('#873c47'),blue:mat('#3e5688'),purple:mat('#55406f')};
-const box=(w,h,d,m,x,y,z,group=scene)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;group.add(o);return o};
-function makeCharacter(name,color,enemy=false){
- const g=new THREE.Group(),skin=mat(enemy?'#9b9ca4':'#d9a27f'),robe=mat(color),hair=mat(name==='Hermione'?'#4a2b18':name==='Pansy'?'#201820':name==='Blaise'?'#17151b':'#34251e'),boot=mat('#171722'),gold=mat('#b89a5a'),shirt=mat('#e5dfd1');
- const part=(geo,m,x,y,z,rx=0,ry=0,rz=0,parent=g)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.rotation.set(rx,ry,rz);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o};
- part(new THREE.CapsuleGeometry(.32,.66,7,14),robe,0,1.2,0);part(new THREE.ConeGeometry(.34,.42,5),robe,0,1.57,-.015,0,Math.PI/4);part(new THREE.CylinderGeometry(.23,.3,.12,14),gold,0,.88,0);part(new THREE.BoxGeometry(.13,.52,.04),shirt,0,1.34,.29);
- part(new THREE.SphereGeometry(.255,24,18),skin,0,1.97,0);
- for(const side of [-1,1]){part(new THREE.SphereGeometry(.065,12,10),skin,side*.25,1.96,0);part(new THREE.SphereGeometry(.035,10,8),mat('#f5eee1'),side*.084,1.99,.222);part(new THREE.SphereGeometry(.018,8,8),mat('#17121a'),side*.084,1.99,.247);part(new THREE.CapsuleGeometry(.018,.07,3,7),hair,side*.084,2.055,.224,0,0,side*-.12)}
- part(new THREE.ConeGeometry(.042,.12,8),skin,0,1.94,.25,Math.PI/2);part(new THREE.SphereGeometry(.268,24,16,0,Math.PI*2,0,Math.PI*.61),hair,0,2.08,0);
- for(let i=0;i<5;i++){const x=(i-2)*.085;part(new THREE.CapsuleGeometry(.047,.16+(i%2)*.08,4,8),hair,x,2.075,.19,0,0,(i-2)*-.13)}
- const arms=[],legs=[];
- for(const side of [-1,1]){const ap=new THREE.Group();ap.position.set(side*.35,1.57,0);g.add(ap);part(new THREE.CapsuleGeometry(.105,.43,5,10),robe,0,-.2,0,0,0,side*-.14,ap);part(new THREE.SphereGeometry(.09,12,10),skin,0,-.46,.015,0,0,0,ap);arms.push(ap);const lp=new THREE.Group();lp.position.set(side*.15,.62,0);g.add(lp);part(new THREE.CapsuleGeometry(.12,.48,5,10),boot,0,-.17,0,0,0,0,lp);part(new THREE.BoxGeometry(.18,.12,.29),boot,0,-.43,.08,0,0,0,lp);legs.push(lp)}
- const wand=part(new THREE.CylinderGeometry(.014,.023,.72,8),mat('#9b7545'),.49,1.17,-.14,-.28,0,-.22);part(new THREE.SphereGeometry(.07,12,10),gold,.22,1.55,.29);
- g.userData={torso:g.children[0],wand,arms,legs,phase:Math.random()*6};return g;
-}
-function makeCreature(type){
- const g=new THREE.Group(),dark=mat('#21191d'),joint=mat('#38282b'),red=mat('#ef3026',.2),limbs=[],joints=[];
- const p=(geo,m,x,y,z,rx=0,ry=0,rz=0)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.rotation.set(rx,ry,rz);o.castShadow=true;o.receiveShadow=true;g.add(o);return o};
- if(type==='Aragogue'){
-  const abdomen=p(new THREE.SphereGeometry(.53,20,16),mat('#2a2020'),0,.55,-.22);abdomen.scale.set(1.25,.85,1.35);
-  p(new THREE.SphereGeometry(.31,18,14),mat('#171416'),0,.64,.34);
-  for(let i=0;i<8;i++){const side=i%2?1:-1,row=Math.floor(i/2),z=.43-row*.31;const hip=p(new THREE.SphereGeometry(.1,10,8),joint,side*.28,.58,z),upper=p(new THREE.CapsuleGeometry(.06,.48,4,8),joint,side*.53,.45,z,0,0,side*-.65),knee=p(new THREE.SphereGeometry(.07,10,8),dark,side*.72,.3,z),lower=p(new THREE.CapsuleGeometry(.04,.55,4,8),dark,side*.93,.12,z,0,0,side*.62),claw=p(new THREE.ConeGeometry(.05,.2,7),dark,side*1.12,-.15,z,0,0,Math.PI);joints.push({hip,knee,upper,lower,claw,phase:i*.8,side})}
-  for(let i=0;i<6;i++)p(new THREE.SphereGeometry(.045,10,8),red,(i-2.5)*.085,.78,.58);
-  p(new THREE.ConeGeometry(.07,.2,7),dark,-.1,.4,.61,Math.PI/2);p(new THREE.ConeGeometry(.07,.2,7),dark,.1,.4,.61,Math.PI/2);
- }else if(type==='Dementador'){
-  p(new THREE.ConeGeometry(.67,1.85,12,3),mat('#17151f'),0,1.04,0).scale.set(1,.9,1);
-  p(new THREE.SphereGeometry(.29,20,16),mat('#08080c'),0,1.72,.04);
-  p(new THREE.SphereGeometry(.36,18,12,0,Math.PI*2,0,Math.PI*.65),mat('#09090e'),0,1.86,-.015);
-  for(let i=0;i<7;i++)limbs.push(p(new THREE.ConeGeometry(.13,.95,6),mat(i%2?'#201d29':'#292431'),(i-3)*.15,.26,Math.sin(i)*.13,0,0,(i-3)*-.08));
-  for(const x of [-.09,.09])p(new THREE.SphereGeometry(.045,8,8),mat('#b6d9f6'),x,1.77,.28);
- }else{
-  const troll=mat('#68765e'),belly=mat('#849078'),club=mat('#503b2b');
-  p(new THREE.SphereGeometry(.52,18,14),troll,0,.92,0).scale.set(1.15,1.25,.85);
-  p(new THREE.SphereGeometry(.36,18,14),belly,0,.87,.32).scale.set(.85,1,.35);
-  p(new THREE.SphereGeometry(.32,18,14),troll,0,1.64,.05);
-  p(new THREE.ConeGeometry(.1,.34,7),troll,-.25,1.83,.08,0,0,.3);p(new THREE.ConeGeometry(.1,.34,7),troll,.25,1.83,.08,0,0,-.3);
-  for(const side of [-1,1]){limbs.push(p(new THREE.CapsuleGeometry(.16,.6,5,10),troll,side*.56,1.1,0,0,0,side*.25));p(new THREE.CapsuleGeometry(.16,.38,5,10),troll,side*.18,.36,0);p(new THREE.BoxGeometry(.27,.16,.42),mat('#34302a'),side*.18,.12,.1);p(new THREE.SphereGeometry(.055,10,8),mat('#d7d09d'),side*.12,1.68,.33)}
-  p(new THREE.CylinderGeometry(.1,.2,.85,9),club,.82,.95,.16,0,0,-.7);for(let n=0;n<4;n++)p(new THREE.ConeGeometry(.075,.2,6),club,.82+n*.04,1.1+n*.12,.29);
+function creature(type){const g=new THREE.Group(),skin=mat(type==='Trasgo'?'#71816b':type==='Aragogue'?'#332629':'#252431'),dark=mat('#171820'),glow=mat(type==='Dementador'?'#c7e8ff':'#db4a38',.2);
+ if(type==='Aragogue'){const body=mesh(new THREE.SphereGeometry(.65,24,18),skin,g,0,.65,0);body.scale.set(1.2,.7,1.4);mesh(new THREE.SphereGeometry(.34,20,16),dark,g,0,.7,.65);for(let i=0;i<8;i++){let s=i%2?1:-1,z=.6-Math.floor(i/2)*.4;const a=mesh(new THREE.CapsuleGeometry(.07,.7,5,10),skin,g,s*.65,.5,z,0,0,s*.7);mesh(new THREE.CapsuleGeometry(.045,.7,4,8),dark,g,s*1.1,.22,z,0,0,-s*.55)}for(let i=0;i<6;i++)mesh(new THREE.SphereGeometry(.055,8,8),glow,g,(i-2.5)*.12,.8,.94)}
+ else if(type==='Dementador'){mesh(new THREE.ConeGeometry(.85,2.5,12,3),skin,g,0,1.1,0);mesh(new THREE.SphereGeometry(.32,20,14),dark,g,0,2.25,0);for(let i=0;i<7;i++)mesh(new THREE.ConeGeometry(.17,1.1,7),skin,g,(i-3)*.2,.3,Math.sin(i)*.2,0,0,(i-3)*-.1);for(let s of [-1,1])mesh(new THREE.SphereGeometry(.05,8,8),glow,g,s*.12,2.3,.28)}
+ else{mesh(new THREE.SphereGeometry(.58,20,16),skin,g,0,1.05,0).scale.set(1.2,1.4,.85);mesh(new THREE.SphereGeometry(.37,18,12),skin,g,0,1.95,.05);for(let s of [-1,1]){mesh(new THREE.CapsuleGeometry(.17,.75,5,10),skin,g,s*.63,1.1,0,0,0,s*.25);mesh(new THREE.CapsuleGeometry(.13,.55,5,10),skin,g,s*.2,.4,0)}mesh(new THREE.CylinderGeometry(.1,.16,1.1,8),M.bark,g,.9,1,.1,0,0,-.6);for(let s of [-1,1])mesh(new THREE.SphereGeometry(.055,8,8),glow,g,s*.14,2,.32)}
+ return g}
+function spawn(){if(!active||spawned>=8)return;const type=['Aragogue','Trasgo','Dementador'][spawned%3];spawned++;const g=creature(type);g.position.set((Math.random()<.5?-1:1)*(6+Math.random()*3),type==='Dementador'?1:0,hero.position.z-22);scene.add(g);foes.push({g,type,hp:type==='Dementador'?70:55,attack:0,phase:Math.random()*8})}
+function say(t){$('objective').textContent=t}
+function hud(){$('life').style.width=hp+'%';$('magic').style.width=mp+'%';$('xp').textContent='Nível '+level+' · '+xp+' XP';$('hero').textContent=cast[selected][0];$('count').textContent='Criaturas: '+kills+'/5';$('quest').textContent=kills>=5?'Chegue ao castelo de Hogwarts':'Derrote as criaturas da floresta'}
+function start(){foes.forEach(e=>scene.remove(e.g));bolts.forEach(b=>scene.remove(b.o));foes=[];bolts=[];hp=100;mp=100;xp=0;kills=0;level=1;spawned=0;hero=makeHero();hero.position.set(0,0,8);scene.add(hero);active=true;spawn();$('menu').classList.add('hidden');$('ending').classList.add('hidden');$('hud').classList.remove('hidden');say('A Floresta Proibida esconde perigos. Avance com cuidado.');hud();clock.start()}
+function castSpell(){if(!active||performance.now()-lastCast<420)return;lastCast=performance.now();const f=new THREE.Vector3(0,0,-1).applyQuaternion(hero.quaternion);let target=null,best=40;for(const e of foes){const d=e.g.position.clone().sub(hero.position),n=d.length();if(n<best&&d.normalize().dot(f)>.1){best=n;target=e}}let color=0x70dfff,damage=35;if(target?.type==='Aragogue'){color=0xffdf65;damage=65;say('ARANIA EXUMAI!')}else if(target?.type==='Dementador'){color=0xbdeaff;damage=75;say('EXPECTO PATRONUM!')}else if(target){color=0xb08bff;damage=60;say('STUPEFY!')}else say('LUMOS!');const o=mesh(new THREE.SphereGeometry(.18,16,12),new THREE.MeshBasicMaterial({color}),scene,hero.position.x,hero.position.y+1.4,hero.position.z);const light=new THREE.PointLight(color,5,5);o.add(light);bolts.push({o,d:f,life:2,damage,type:target?.type})}
+function end(win){active=false;$('hud').classList.add('hidden');$('ending').classList.remove('hidden');$('endtitle').textContent=win?'Bem-vindo a Hogwarts!':'A floresta venceu desta vez';$('endtext').textContent=win?'Você enfrentou as criaturas da Floresta Proibida e chegou ao castelo. A próxima aventura espera por você.':'Sua energia acabou. Recupere suas forças e tente novamente.'}
+function animate(){requestAnimationFrame(animate);if(!renderer)return;const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
+ if(active&&hero){const v=new THREE.Vector3();if(keys.w||keys.ArrowUp)v.z-=1;if(keys.s||keys.ArrowDown)v.z+=1;if(keys.a||keys.ArrowLeft)v.x-=1;if(keys.d||keys.ArrowRight)v.x+=1;if(v.lengthSq()){v.normalize();hero.position.addScaledVector(v,7*dt);hero.rotation.y=Math.atan2(-v.x,-v.z);hero.userData.legs.forEach((l,i)=>l.rotation.x=Math.sin(t*10+i*Math.PI)*.55);hero.userData.arms.forEach((a,i)=>a.rotation.x=Math.sin(t*10+i*Math.PI)*.3)}else{hero.userData.legs.forEach(l=>l.rotation.x=0)}
+ hero.position.x=THREE.MathUtils.clamp(hero.position.x,-28,28);hero.position.z=THREE.MathUtils.clamp(hero.position.z,-105,12);hero.position.y=keys.jump?Math.max(0,Math.sin(t*9)*1.2):0;
+ const desired=new THREE.Vector3(hero.position.x,hero.position.y+4.7,hero.position.z+8.5);camera.position.lerp(desired,.09);camera.lookAt(hero.position.x,hero.position.y+1,hero.position.z-3);
+ mp=Math.min(100,mp+dt*8);
+ for(const e of foes){const d=hero.position.clone().sub(e.g.position),dist=d.length();e.attack-=dt;if(dist>1.8){d.normalize();e.g.position.addScaledVector(d,dt*(e.type==='Aragogue'?2.1:1.5));e.g.rotation.y=Math.atan2(-d.x,-d.z)}else if(e.attack<=0){e.attack=1.3;hp-=e.type==='Dementador'?13:10;hud();if(hp<=0){hp=0;end(false)}}e.g.position.y=e.type==='Dementador'?1+Math.sin(t*2+e.phase)*.3:Math.sin(t*4+e.phase)*.04}
+ for(let i=bolts.length-1;i>=0;i--){let b=bolts[i];b.o.position.addScaledVector(b.d,dt*27);b.life-=dt;let hit=false;for(const e of foes){if(b.o.position.distanceTo(e.g.position.clone().add(new THREE.Vector3(0,1,0)))<1.7){e.hp-=b.type===e.type?b.damage:b.damage*.7;hit=true;if(e.hp<=0){scene.remove(e.g);foes=foes.filter(x=>x!==e);kills++;xp+=30;if(xp>=100){level++;xp-=100}hud();if(kills<5){say(e.type+' derrotado. Outra criatura se aproxima...');setTimeout(()=>{if(active&&foes.length===0)spawn()},900)}else say('As criaturas recuaram! Siga a ponte até Hogwarts.')}break}}if(hit||b.life<=0){scene.remove(b.o);bolts.splice(i,1)}}
+ if(kills>=5&&hero.position.z<=-85){say('Você chegou a Hogwarts!');clearTimeout(finishTimer);finishTimer=setTimeout(()=>{if(active)end(true)},600)}
+ if(hp<=0&&active)end(false);hud();
  }
- g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});g.userData={type,phase:Math.random()*8,joints,limbs};upgradeEnemyModel(type,g);return g;
-}
-function buildWorld(){
- gltfLoader=new GLTFLoader();mixers=[];assetCache={};assetPending={};
- scene=new THREE.Scene();scene.background=new THREE.Color('#9aaab0');scene.fog=new THREE.FogExp2('#9aaab0',.014);
- camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,180);renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;$('game').replaceChildren(renderer.domElement);
- scene.add(new THREE.HemisphereLight('#cbdaf2','#283021',2.0));const sun=new THREE.DirectionalLight('#ffdfac',3.1);sun.position.set(-18,28,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-35;sun.shadow.camera.right=35;sun.shadow.camera.top=35;sun.shadow.camera.bottom=-35;scene.add(sun);
- const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),mats.grass);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
- // path
- const path=new THREE.Mesh(new THREE.PlaneGeometry(7,90),mat('#61594e'));path.rotation.x=-Math.PI/2;path.position.set(0,.015,-24);scene.add(path);
- // castle silhouette
- for(let i=0;i<7;i++){let x=-20+i*6.5,h=10+(i%3)*5;box(4,h,4,mat(i%2?'#555a68':'#424958'),x,h/2-0.1,-48);let roof=new THREE.Mesh(new THREE.ConeGeometry(3,4,4),mat('#343447'));roof.position.set(x,h+1.8,-48);roof.rotation.y=Math.PI/4;scene.add(roof);for(let k=-1;k<=1;k+=2)box(.28,1,.28,mats.gold,x+k*1.25,h-1,-45.9)}
- // Rochas e troncos caídos funcionam como obstáculos físicos.
- obstacleZones=[];for(let i=0;i<16;i++){const x=(i%2?1:-1)*(2.8+Math.random()*4),z=4-i*4.2,r=.65+Math.random()*.35;const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(r,0),mat(i%2?'#5b5a5d':'#494a4d'));rock.position.set(x,r*.55,z);rock.scale.y=.65;rock.castShadow=true;rock.receiveShadow=true;scene.add(rock);obstacleZones.push({x,z,r:r+.25})}for(let i=0;i<7;i++){const x=(i%2?1:-1)*(1.8+Math.random()*2),z=-12-i*7;const log=new THREE.Mesh(new THREE.CylinderGeometry(.22,.3,2.7,8),mats.wood);log.position.set(x,.3,z);log.rotation.z=Math.PI/2;log.castShadow=true;scene.add(log);obstacleZones.push({x,z,r:1.45})}
- // Cenário original: pedras rúnicas, cogumelos bioluminescentes e vagalumes flutuantes.
- const runeMat=mat('#91a8c7',.3,.4);
- for(let i=0;i<12;i++){const x=(i%2?1:-1)*(6+Math.random()*5),z=-8-i*5.5;const stone=new THREE.Mesh(new THREE.CylinderGeometry(.45,.6,1.15,6),mat('#555a61'));stone.position.set(x,.56,z);stone.rotation.y=Math.random();scene.add(stone);const rune=new THREE.Mesh(new THREE.TorusGeometry(.29,.025,6,18),runeMat);rune.position.set(x,1.15,z);rune.rotation.x=Math.PI/2;scene.add(rune);for(let j=0;j<3;j++){const mx=x+(j-1)*.25,mz=z+.65;const stem=new THREE.Mesh(new THREE.CylinderGeometry(.035,.05,.22,7),mat('#c7c7a1'));stem.position.set(mx,.12,mz);scene.add(stem);const cap=new THREE.Mesh(new THREE.SphereGeometry(.16,10,8,0,Math.PI*2,0,Math.PI/2),mat('#c04f85',.35));cap.position.set(mx,.25,mz);scene.add(cap)}}
- const fireflyGeo=new THREE.SphereGeometry(.035,6,6),fireflyMat=new THREE.MeshBasicMaterial({color:'#ffe8a1'});
- for(let i=0;i<65;i++){const f=new THREE.Mesh(fireflyGeo,fireflyMat);f.position.set((Math.random()-.5)*30,.7+Math.random()*4,-Math.random()*65);scene.add(f);world.push({object:f,base:f.position.clone(),phase:Math.random()*8,speed:.5+Math.random()})}
- // Árvores antigas em camadas
- for(let i=0;i<95;i++){let x=(Math.random()-.5)*78,z=10-Math.random()*95;if(Math.abs(x)<5&&z> -60)continue;const trunk= new THREE.Mesh(new THREE.CylinderGeometry(.18,.35,2.8,6),mats.wood);trunk.position.set(x,1.4,z);trunk.castShadow=true;scene.add(trunk);for(let j=0;j<3;j++){const crown=new THREE.Mesh(new THREE.ConeGeometry(1.3-j*.15,2.6,7),mat(['#243b32','#304a37','#3d5038'][Math.floor(Math.random()*3)]));crown.position.set(x,2.9+j*1.15,z);crown.castShadow=true;scene.add(crown)}}
- // Modelos 3D externos de árvores e rochas (licença CC0), combinados ao cenário artesanal.
- for(let i=0;i<18;i++){const side=i%2?1:-1;addEnvironmentModel('https://gobkit.com/freebies/environment/TreeHigh001.glb',side*(7+Math.random()*18),0,-4-i*4.6,5+Math.random()*2,Math.random()*Math.PI)}
- for(let i=0;i<10;i++){const side=i%2?1:-1;addEnvironmentModel('https://gobkit.com/freebies/environment/Rock002.glb',side*(4+Math.random()*5),0,-7-i*6.2,.9+Math.random()*.8,Math.random()*Math.PI)}
- // station platforms and rails
- for(let s of [-1,1]){box(2.3,.5,35,mat('#7b766e'),s*4,.25,17);box(.14,.08,36,mat('#292c33',.3,.7),s*4,.55,17)}
- for(let z=-1;z<36;z+=1.25)box(7,.12,.24,mats.wood,0,.16,z);
- for(let s of [-1,1])box(.13,.13,38,mat('#9aa0a8',.3,.7),s*1.1,.32,17);
- // station canopy
- for(let z=-1;z<37;z+=5){for(let s of [-1,1])box(.22,5,.22,mats.dark,s*6,2.5,z);box(12,.22,.25,mats.dark,0,5,z)}
- box(12,.25,39,mat('#282536'),0,5.1,17);
- // sign
- const cv=document.createElement('canvas');cv.width=512;cv.height=128;const ctx=cv.getContext('2d');ctx.fillStyle='#14241d';ctx.fillRect(0,0,512,128);ctx.strokeStyle='#c9a65d';ctx.lineWidth=7;ctx.strokeRect(5,5,502,118);ctx.fillStyle='#f2dfac';ctx.font='bold 39px Georgia';ctx.textAlign='center';ctx.fillText('HOGWARTS EXPRESS',256,78);const tex=new THREE.CanvasTexture(cv);const sign=new THREE.Mesh(new THREE.PlaneGeometry(7,1.7),new THREE.MeshBasicMaterial({map:tex}));sign.position.set(0,4.25,-1.8);scene.add(sign);
- // train body on track
- const train=new THREE.Group();scene.add(train);box(3.5,2.9,13,mat('#7d2427'),0,2,18,train);box(3.7,.35,13.2,mat('#20202a'),0,.55,18,train);box(3.7,.25,13.2,mat('#b8944f',.3,.4),0,3.5,18,train);
- for(let z=12;z<=24;z+=2.1){box(.75,.75,.08,mat('#d7c8a0',.25),-1.76,2.35,z,train);box(.75,.75,.08,mat('#d7c8a0',.25),1.76,2.35,z,train)}
- for(let z=12;z<=24;z+=2.6)for(let s of [-1,1]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.18,16),mat('#181820',.4,.4));wheel.rotation.z=Math.PI/2;wheel.position.set(s*1.9,.65,z);train.add(wheel)}
- const chimney=new THREE.Mesh(new THREE.CylinderGeometry(.35,.42,1.3,12),mat('#17171c'));chimney.position.set(0,4,24);train.add(chimney);
- // lamps
- for(let z=0;z<38;z+=8)for(let s of [-1,1]){const pole=new THREE.Mesh(new THREE.CylinderGeometry(.06,.09,3,8),mats.dark);pole.position.set(s*7,1.5,z);scene.add(pole);const orb=new THREE.Mesh(new THREE.SphereGeometry(.2,10,10),mat('#ffcf72',.25));orb.position.set(s*7,3,z);scene.add(orb);const light=new THREE.PointLight('#ffc66e',9,8);light.position.set(s*7,2.8,z);scene.add(light)}
-}
-function clearDynamic(){for(const e of enemies)scene.remove(e.group);for(const s of spells)scene.remove(s.mesh);enemies=[];spells=[];if(player)scene.remove(player)}
-function spawnEnemies(){waveQueue=['Aragogue','Trasgo','Dementador','Aragogue','Trasgo','Dementador','Trasgo','Aragogue'];spawnNextEnemy();}
-function spawnNextEnemy(){if(!active||!player||waveQueue.length===0)return;const type=waveQueue.shift(),group=makeCreature(type);const side=Math.random()<.5?-1:1;group.position.set(side*(5+Math.random()*4),0,Math.max(-48,player.position.z-18));scene.add(group);enemies.push({group,type,hp:type==='Dementador'?65:45,speed:type==='Aragogue'?1.8:type==='Dementador'?1.2:2.2,attack:0,alive:true});say(type==='Aragogue'?'Aragogue se aproxima!':type==='Dementador'?'Um dementador está chegando!':'Um trasgo apareceu!');}
-function resetGame(){
- clearDynamic();hp=100;mp=100;xp=0;kills=0;level=1;waveQueue=['Aragogue','Trasgo','Dementador','Aragogue','Trasgo','Dementador','Trasgo','Aragogue'];player=makeCharacter(roster[chosen][0],roster[chosen][2]);player.position.set(0,0,27);scene.add(player);active=true;spawnNextEnemy();updateHud();$('mission').textContent='Atravesse a Floresta Proibida: derrote 5 criaturas e alcance Hogwarts.';active=true;$('menu').classList.add('hidden');$('end').classList.add('hidden');$('hud').classList.remove('hidden');clock.start();say('Sua aventura começou. As criaturas estão se aproximando!');}
-function updateHud(){$('hpFill').style.width=Math.max(0,hp)+'%';$('mpFill').style.width='100%';$('level').textContent='Nível '+level+' · '+xp+' XP';$('kills').textContent=kills;$('heroName').textContent=roster[chosen][0];$('quest').textContent=kills>=5?'Encontre o castelo':'Derrote as criaturas'}
-function say(s){$('toast').textContent=s;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2200)}
-function castSpell(){if(!active||performance.now()-lastCast<380)return;lastCast=performance.now();const forward=new THREE.Vector3(0,0,-1).applyQuaternion(player.quaternion);let target=null,best=36;for(const e of enemies){if(!e.alive)continue;const to=e.group.position.clone().sub(player.position),dist=to.length();if(dist<best&&to.normalize().dot(forward)>.15){best=dist;target=e}}let spellName='Expelliarmus',color=0x62d9ff,damage=28,dir=forward;if(target){dir=target.group.position.clone().sub(player.position).normalize();if(target.type==='Aragogue'){spellName='ARANIA EXUMAI';color=0xffe45c;damage=60}else if(target.type==='Dementador'){spellName='EXPECTO PATRONUM';color=0xd8f7ff;damage=70}else{spellName='WINGARDIUM LEVIOSA';color=0x9c82ff;damage=55}}say('✦ '+spellName+' ✦');const mesh=new THREE.Mesh(new THREE.SphereGeometry(.2,14,12),new THREE.MeshBasicMaterial({color}));mesh.position.copy(player.position).add(new THREE.Vector3(0,1.35,0)).add(dir.clone().multiplyScalar(.7));scene.add(mesh);const glow=new THREE.PointLight(color,4,5);mesh.add(glow);spells.push({mesh,dir,speed:28,life:2.3,damage,spellName,targetType:target?.type||null});updateHud()}
-function finish(win){active=false;$('hud').classList.add('hidden');$('end').classList.remove('hidden');$('endTitle').textContent=win?'Vitória mágica!':'Você foi derrotado';$('endText').textContent=win?'Você protegeu a floresta e derrotou as criaturas. + '+xp+' XP. Que sua próxima aventura seja ainda maior!':'As criaturas venceram desta vez. Reúna suas forças e tente novamente.'}
-function attackPlayer(e,dt){if(e.attack>0)return;e.attack=1.25;hp-=e.type==='Dementador'?12:9;say(e.type+' atacou você!');if(hp<=0){hp=0;updateHud();finish(false)}}
-function animate(){
- raf=requestAnimationFrame(animate);if(!renderer||!scene)return;const dt=Math.min(clock.getDelta()||0,.04),t=clock.elapsedTime;for(const mixer of mixers)mixer.update(dt);
- if(active&&player){
-  const move=new THREE.Vector3();if(keys.w||keys.ArrowUp)move.z-=1;if(keys.s||keys.ArrowDown)move.z+=1;if(keys.a||keys.ArrowLeft)move.x-=1;if(keys.d||keys.ArrowRight)move.x+=1;
-  if(move.lengthSq()>0){move.normalize();const nextX=player.position.x+move.x*7*dt,nextZ=player.position.z+move.z*7*dt;let blocked=false;for(const o of obstacleZones){if(Math.hypot(nextX-o.x,nextZ-o.z)<o.r+.45){blocked=true;break}}if(!blocked){player.position.x=nextX;player.position.z=nextZ}player.rotation.y=Math.atan2(-move.x,-move.z)}
-  player.position.x=THREE.MathUtils.clamp(player.position.x,-23,23);player.position.z=THREE.MathUtils.clamp(player.position.z,-65,38);
-  player.position.y=keys.jump?Math.max(0,Math.sin(t*9)*1.2):0;
-  const walking=move.lengthSq()>.1,phase=t*9+player.userData.phase;
-  player.userData.torso.rotation.z=Math.sin(phase)*(walking?.055:Math.sin(t*1.7)*.012);
-  player.userData.arms.forEach((arm,i)=>{arm.rotation.x=walking?Math.sin(phase+i*Math.PI)*.72:Math.sin(t*1.5+i)*.035;arm.rotation.z=(i===0?1:-1)*(walking?.08:0)});
-  player.userData.legs.forEach((leg,i)=>{leg.rotation.x=walking?Math.sin(phase+i*Math.PI)*.65:0});
-  camera.position.lerp(new THREE.Vector3(player.position.x,player.position.y+5.2,player.position.z+9.2),.09);camera.lookAt(player.position.x,player.position.y+1.2,player.position.z-2);
-  mp=Math.min(100,mp+dt*4.2);
-  for(const e of enemies){if(!e.alive)continue;e.attack-=dt;const dx=player.position.x-e.group.position.x,dz=player.position.z-e.group.position.z,dist=Math.hypot(dx,dz);if(dist>1.7){const speed=e.speed*(dist<12?1.45:1);e.group.position.x+=dx/(dist||1)*speed*dt;e.group.position.z+=dz/(dist||1)*speed*dt;e.group.rotation.y=Math.atan2(-dx,-dz)}else attackPlayer(e,dt);e.group.position.y=e.type==='Dementador'?1.2+Math.sin(t*2+e.group.userData.phase)*.25:Math.abs(Math.sin(t*5+e.group.userData.phase))*.03;
-   if(e.type==='Aragogue'){for(const leg of e.group.userData.joints){leg.upper.rotation.z=leg.side*(-.55+Math.sin(t*8+leg.phase)*.18);leg.lower.rotation.z=leg.side*(.55+Math.sin(t*8+leg.phase+1)*.22)}}
-   if(e.type==='Trasgo')e.group.userData.limbs.forEach((arm,i)=>{arm.rotation.z=Math.sin(t*3+i)*.16});
-   if(e.type==='Dementador')e.group.userData.limbs.forEach((flap,i)=>{flap.rotation.z=Math.sin(t*2+i*.6)*.08})}
-  for(let i=spells.length-1;i>=0;i--){const s=spells[i];s.mesh.position.addScaledVector(s.dir,s.speed*dt);s.life-=dt;let hit=false;for(const e of enemies){if(!e.alive)continue;const p=e.group.position.clone();p.y+=.9;if(s.mesh.position.distanceTo(p)<1.65){e.hp-=s.targetType===e.type?s.damage:s.damage*.65;hit=true;if(e.hp<=0){e.alive=false;scene.remove(e.group);kills++;xp+=25;if(xp>=100){level++;xp-=100;say('Subiu para o nível '+level+'!')}else say(e.type+' derrotado!');updateHud();if(kills>=5){$('mission').textContent='As criaturas recuaram. Siga pela trilha até o castelo de Hogwarts!';say('O caminho está livre. Hogwarts está à frente!')}else{setTimeout(()=>{if(active&&enemies.every(x=>!x.alive))spawnNextEnemy()},1100)}}else say(e.type+' atingido!');break}}if(hit||s.life<=0){scene.remove(s.mesh);spells.splice(i,1)}}
-  if(kills<5)$('mission').textContent='Derrote 5 criaturas · '+kills+'/5';else{$('mission').textContent='Siga até Hogwarts · '+Math.max(0,Math.round((player.position.z+65)/7))+' passos';if(player.position.z<=-58){$('mission').textContent='Você chegou a Hogwarts!';setTimeout(()=>{if(active)finish(true)},500)}}if(hp<=0&&active)finish(false);updateHud();
- }
- for(const f of world){f.object.position.y=f.base.y+Math.sin(t*f.speed+f.phase)*.45;f.object.position.x=f.base.x+Math.sin(t*.45+f.phase)*.55}
- if(player){const target=new THREE.Vector3(player.position.x,player.position.y+5.2,player.position.z+9.2);if(!active){}renderer.render(scene,camera)}else renderer.render(scene,camera);
-}
-const sigils=['🧶','🔥','🏆','⚡','🐍','🌙','✨','📚','🌕'];
-roster.forEach((c,i)=>{const b=document.createElement('button');b.className='char'+(i===chosen?' selected':'');b.innerHTML='<span class="sigil">'+sigils[i]+'</span>'+c[0];b.onclick=()=>{chosen=i;document.querySelectorAll('.char').forEach((el,j)=>el.classList.toggle('selected',i===j))};$('characters').append(b)});
-$('start').onclick=()=>{if(!scene)buildWorld();resetGame()};
-$('again').onclick=()=>resetGame();$('endMenu').onclick=()=>{$('end').classList.add('hidden');$('menu').classList.remove('hidden')};
-$('back').onclick=()=>{active=false;$('hud').classList.add('hidden');$('menu').classList.remove('hidden')};
-$('mobileSpell').onclick=castSpell;$('mobileJump').onpointerdown=()=>keys.jump=true;$('mobileJump').onpointerup=()=>keys.jump=false;
-document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;b.onpointerdown=e=>{e.preventDefault();keys[k]=true};for(const ev of ['pointerup','pointercancel','pointerleave'])b.addEventListener(ev,()=>keys[k]=false)});
-addEventListener('keydown',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;keys[k]=true;if(k==='e'||k==='Enter')castSpell();if(k===' '){keys.jump=true;e.preventDefault()}});
-addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;keys[k]=false;if(k===' ')keys.jump=false});
-addEventListener('pointerdown',e=>{if(active&&e.target===renderer.domElement)castSpell()});
-addEventListener('resize',()=>{if(camera&&renderer){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}});
-clock=new THREE.Clock();buildWorld();camera.position.set(0,7,38);camera.lookAt(0,1,20);animate();
-</script>
-</body></html>
+ for(const p of particles)p.p.position.y=p.y+Math.sin(t*1.6+p.phase)*.45;
+ renderer.render(scene,camera)}
+cast.forEach((c,i)=>{let b=document.createElement('button');b.className='person'+(i===selected?' active':'');b.innerHTML='<span>'+c[1]+'</span>'+c[0];b.onclick=()=>{selected=i;document.querySelectorAll('.person').forEach((x,j)=>x.classList.toggle('active',j===i))};$('roster').append(b)});
+$('play').onclick=start;$('retry').onclick=start;$('tomenu').onclick=()=>{$('ending').classList.add('hidden');$('menu').classList.remove('hidden')};$('spell').onclick=castSpell;$('jump').onpointerdown=()=>keys.jump=true;$('jump').onpointerup=()=>keys.jump=false;
+document.querySelectorAll('[data-k]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();keys[b.dataset.k]=true};['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,()=>keys[b.dataset.k]=false))});
+addEventListener('keydown',e=>{let k=e.key.length===1?e.key.toLowerCase():e.key;keys[k]=true;if(k==='e'||k==='Enter')castSpell();if(k===' '){keys.jump=true;e.preventDefault()}});addEventListener('keyup',e=>{let k=e.key.length===1?e.key.toLowerCase():e.key;keys[k]=false});
+addEventListener('pointerdown',e=>{if(active&&e.target===renderer.domElement)castSpell()});addEventListener('resize',()=>{if(camera&&renderer){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}});
+clock=new THREE.Clock();build();camera.position.set(0,7,18);camera.lookAt(0,1,5);animate();
+</script></body></html>
